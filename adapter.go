@@ -2,16 +2,33 @@ package adapter
 
 import (
 	"github.com/casbin/casbin/v2/model"
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-type Adapter struct{}
+type rule struct {
+	PType string
+	V0    string
+	V1    string
+	V2    string
+	V3    string
+	V4    string
+	V5    string
+}
+
+// Adapter implements persist.Adapter, persist.BatchAdapter and persist.UpdatableAdapter.
+//
+// persist.FilteredAdapter interface is currently not implemented.
+type Adapter struct {
+	pool *pgxpool.Pool
+}
+
+func NewAdapter(pool *pgxpool.Pool) *Adapter {
+	return &Adapter{pool: pool}
+}
 
 // LoadPolicy loads all policy rules from the storage.
 func (adapter *Adapter) LoadPolicy(model model.Model) error {
 }
-
-// LoadFilteredPolicy loads only policy rules that match the filter.
-func (adapter *Adapter) LoadFilteredPolicy(model model.Model, filter interface{}) error {}
 
 // SavePolicy saves all policy rules to the storage.
 func (adapter *Adapter) SavePolicy(model model.Model) error {}
@@ -38,9 +55,6 @@ func (adapter *Adapter) RemovePolicies(sec string, ptype string, rules [][]strin
 // This is part of the Auto-Save feature.
 func (adapter *Adapter) RemoveFilteredPolicy(sec string, ptype string, fieldIndex int, fieldValues ...string) error {
 }
-
-// IsFiltered returns true if the loaded policy has been filtered.
-func (adapter *Adapter) IsFiltered() bool {}
 
 // UpdatePolicy updates a policy rule from storage.
 // This is part of the Auto-Save feature.
