@@ -172,6 +172,21 @@ func insertRule(qe queryExecutor, tableName string, r *rule) error {
 	return errors.Wrap(err, "failed to insert a rule")
 }
 
+func removeRule(qe queryExecutor, tableName string, r *rule) error {
+	return deleteRule(qe, tableName, r, false)
+}
+
+func removeRuleByFilter(qe queryExecutor, tableName string, r *rule) error {
+	return deleteRule(qe, tableName, r, true)
+}
+
+func deleteRule(qe queryExecutor, tableName string, r *rule, isFiltered bool) error {
+	var query strings.Builder
+	query.WriteString("DELETE FROM ")
+	query.WriteString(tableName)
+	query.WriteString(" WHERE ")
+}
+
 func scanRule(s scanner, dst *rule) error {
 	return errors.Wrap(s.Scan(
 		&dst.PType,

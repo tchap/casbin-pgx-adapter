@@ -61,11 +61,21 @@ func (adapter *Adapter) AddPolicies(section string, ptype string, rules [][]stri
 // RemovePolicy removes a policy rule from the storage.
 // This is part of the Auto-Save feature.
 func (adapter *Adapter) RemovePolicy(section string, ptype string, rule []string) error {
+	return removeRule(adapter.pool, adapter.tableName, ruleFromTokens(ptype, rule))
 }
 
 // RemovePolicies removes policy rules from the storage.
 // This is part of the Auto-Save feature.
-func (adapter *Adapter) RemovePolicies(section string, ptype string, rules [][]string) error {}
+func (adapter *Adapter) RemovePolicies(section string, ptype string, rules [][]string) error {
+	return adapter.withTx(func(tx pgx.Tx) error {
+		for _, tokens := range rules {
+			if err := removeRule(tx, adapter.tableName, ruleFromTokens(ptype, tokens)); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}
 
 // RemoveFilteredPolicy removes policy rules that match the filter from the storage.
 // This is part of the Auto-Save feature.
