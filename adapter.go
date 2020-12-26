@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/casbin/casbin/v2/model"
-	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/pkg/errors"
 )
